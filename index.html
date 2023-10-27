@@ -1,123 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset='utf-8' />
-  <title>Mapbox GeoJSON Layer</title>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src='https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js'></script>
-  <link href='https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css' rel='stylesheet' />
-  <style>
-    body { margin: 0; padding: 0; }
-    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-  </style>
+<meta charset="utf-8">
+<title>Display a popup on click</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+.slider-container {
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            z-index: 1;
+        }
+
+        .slider {
+            width: 100%;
+            color: white;
+        }
+
+        .slider-label {
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .selected-year {
+            font-weight: bold;
+            color: white;
+        }
+        #slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 20px;
+  background-color: blue;
+  cursor: pointer;
+}
+
+#slider::-moz-range-thumb {
+  width: 10px;
+  height: 20px;
+  background-color: blue;
+  cursor: pointer;
+}   
+</style>
 </head>
 <body>
-  <div id='map'></div>
+<style>
+    .mapboxgl-popup {
+        max-width: 800px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    }
 
-  <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiamFtZXMtbWNrZW56aWUtYXNsIiwiYSI6ImNsaHBtYXo1aDA4MWczZ281bXJhbnc0dGMifQ.8pxJxAy6HV0CQfuibaIFmw';
+</style>
+<div id="map"></div>
 
-    var map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [178.048741, -38.251284],
-      zoom: 7.8
+<div class="slider-container">
+    <div class="slider-label">Year:</div>
+    <input type="range" min="2016" max="2023" value="2016" class="slider" id="year-slider">
+    <div class="slider-label">Selected Year: <span class="selected-year" id="selected-year">2016</span></div>
+</div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiamFtZXMtbWNrZW56aWUtYXNsIiwiYSI6ImNsaHBtYXo1aDA4MWczZ281bXJhbnc0dGMifQ.8pxJxAy6HV0CQfuibaIFmw';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: [-185.555419,-40.693557],
+        zoom: 5.0
     });
+    var slider = document.getElementById('year-slider');
+    var selectedYearElement = document.getElementById('selected-year');
+    var geojsonLayer;
+    var AreasLayer;
 
-    map.on('load', function () {
-      // Add your sources and layers here...
+    slider.addEventListener('input', function (e) {
+        var year = parseInt(e.target.value);
+        selectedYearElement.textContent = year;
 
-      map.addSource('ProjectArea', {
-        type: 'geojson',
-        data: 'Data/2023_ASL_LiDAR.geojson'
-      });
-
-      map.addLayer({
-        id: 'ProjectLayer',
-        type: 'fill',
-        source: 'ProjectArea',
-        paint: {
-          'fill-color': 'Blue',
-          'fill-opacity': 0.5
+        // Remove previous GeoJSON layer if it exists
+        // if (geojsonLayer) {
+        //     map.removeLayer(geojsonLayer);
+        //     map.removeSource(geojsonLayer);
+        // }
+        if (AreasLayer) {
+            map.removeLayer(AreasLayer);
+            map.removeSource(AreasLayer);
         }
-      });
 
-    //   map.addSource('CoverageSource', {
-    //     type: 'geojson',
-    //     data: 'Data/PGRM3124 - Coverage.geojson'
-    //   });
+        // Construct the GeoJSON layer ID with the selected year prefix
+        //var FrameCentres = 'FrameCentres' + year;
+        var Areas = 'Areas' + year;
 
-    //   map.addLayer({
-    //     id: 'CoverageLayer',
-    //     type: 'fill',
-    //     source: 'CoverageSource',
-    //     paint: {
-    //       'fill-color': '#FF0000',
-    //       'fill-opacity': 0.5
-    //     }
-    //   });
+        // Your GeoJSON source URL for the corresponding year
+        //var geojsonUrl = 'data/'+ year +'_ASL_LiDAR.geojson';
+        var geojsonAreas = 'data/'+ year +'_ASL_LiDAR.geojson';
 
-    //   map.addSource('ProjectCentre', {
-    //     type: 'geojson',
-    //     data: 'Data/Gisborne DC - Cyclone Gabrielle 2023 - Project Centre.geojson'
-    //   });
+        // Add Frames
+        map.addSource(Areas, {
+            type: 'geojson',
+            data: geojsonAreas
+        });
 
-    //   map.addLayer({
-    //     id: 'PCentre',
-    //     type: 'circle',
-    //     source: 'ProjectCentre',
-    //     paint: {
-	// 			'circle-radius': [
-    //                             'interpolate',
-    //                             ['exponential', 1.10],
-    //                             ['zoom'],
-    //                             0,
-    //                             0.5,
-    //                             19,
-    //                             15
-    //                             ],
-    //                 'circle-color': 'white'
-    //         }
-    //   });
-    //   map.on('idle', function () {
-    //     const featuresPCentre = map.queryRenderedFeatures({ layers: ['PCentre'] });
-    //     const featuresCoverage = map.queryRenderedFeatures({ layers: ['CoverageLayer'] });
-    //     const featuresProject = map.queryRenderedFeatures({ layers: ['ProjectLayer'] });
+        
+        map.addLayer({
+            id: Areas,
+            type: 'fill',
+            source: Areas,
+            paint: {
+          'fill-color': 'Blue',
+          'fill-opacity': 0.7
+        }
+        });
 
-    //     if (featuresPCentre.length > 0 && featuresCoverage.length > 0) {
-    //       const featurePCentre = featuresPCentre[0];
-    //       const featureCoverage = featuresCoverage[0];
-    //       const featureProject = featuresProject[0];
+        
+        // Update the global geojsonLayer variable for future removal
+        //geojsonLayer = FrameCentres;
+        AreasLayer = Areas;
 
-    //       const coordinates = featurePCentre.geometry.coordinates.slice();
-    //       const description = "<span style='color: #7FBA00;font-size: 14px;'><b>" + featurePCentre.properties.Project_Name + "</b></br>" +
-    //                           "<span style='color: black;'><b>Project Code: </b>" + featurePCentre.properties.Project + "</br>" +
-    //                           "<b>Survey Type: </b>" + featureCoverage.properties.Survey_Typ + "</br>" +
-    //                           "<b>GSD: </b>" + featureCoverage.properties.GSD + "</br>" +
-    //                           "<b>Area: </b>" + (featureProject.properties.Project_Area / 1000000).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + " km²</br>" +
-    //                           "<b>Captured Area: </b>" + (featureCoverage.properties.Area / 1000000).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + " km²</br>" +
-    //                           "<b>Coverage To Date: " + featureCoverage.properties.Percentage_Coverage + "%</b></br>";
-
-    //       var popupContent = document.createElement('div');
-    //       popupContent.innerHTML = description;
-
-    //       var popup = new mapboxgl.Popup({ })
-    //         .setLngLat(coordinates)
-    //         .setDOMContent(popupContent)
-    //         .addTo(map);
-    //     }
-    //   });
-
-    //   map.on('mouseenter', 'PCentre', function () {
-    //     map.getCanvas().style.cursor = 'pointer';
-    //   });
-
-    //   map.on('mouseleave', 'PCentre', function () {
-    //     map.getCanvas().style.cursor = '';
-    //   });
     });
 
+</script>
 
-  </script>
 </body>
 </html>
