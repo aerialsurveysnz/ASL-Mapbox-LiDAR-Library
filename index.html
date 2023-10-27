@@ -99,8 +99,8 @@ body { margin: 0; padding: 0; }
         var Frames = 'Frames' + year;
 
         // Your GeoJSON source URL for the corresponding year
-        var geojsonUrl = 'data/'+ year +'_ASL_LiDAR LiDAR Centres.geojson';
-        var geojsonFrames = 'data/'+ year +'_ASL_LiDAR - Captured_Area.geojson';
+        var geojsonUrl = 'data/'+ year +'_ASL_LiDAR_Centres.geojson';
+        var geojsonFrames = 'data/'+ year +'_ASL_LiDAR_Captured_Area.geojson';
 
         // Add Frames
         map.addSource(Frames, {
@@ -158,22 +158,23 @@ body { margin: 0; padding: 0; }
         map.on('click', [FrameCentres], (e) => {
         // Copy coordinates array.
         const coordinates = e.features[0].geometry.coordinates.slice();
-        const description = "<b>Survey No: </b>"+e.features[0].properties.SN_No+"</br>";
-        const UniqueID =e.features[0].properties.UniqueID;
+        const description = "<b>Survey No: </b>"+e.features[0].properties.Company_Name+"</br>"
+                            "<b>Survey No: </b>"+e.features[0].properties.SN_No+"</br>";
+        //const UniqueID =e.features[0].properties.SN_No;
         
         var popupContent = document.createElement('div');
         popupContent.innerHTML = description;
         
-        var copyButton = document.createElement('button');
-        copyButton.innerText = 'Copy Reference';
-        copyButton.style.display = 'block';
-        copyButton.style.margin = '0 auto'; // Center the button horizontally
-        copyButton.addEventListener('click', function() {
-            copyToClipboard(UniqueID);
-            //alert('Content copied to clipboard!');
-        });
+        // var copyButton = document.createElement('button');
+        // copyButton.innerText = 'Copy Reference';
+        // copyButton.style.display = 'block';
+        // copyButton.style.margin = '0 auto'; // Center the button horizontally
+        // copyButton.addEventListener('click', function() {
+        //     copyToClipboard(UniqueID);
+        //     //alert('Content copied to clipboard!');
+        // });
 
-        popupContent.appendChild(copyButton);
+        // popupContent.appendChild(copyButton);
 
         // Ensure that if the map is zoomed out such that multiple
         // copies of the feature are visible, the popup appears
@@ -197,16 +198,16 @@ body { margin: 0; padding: 0; }
             var targetLayerVisibility = map.getLayoutProperty(Frames, 'visibility');
             if (targetLayerVisibility === 'none') {
             map.setLayoutProperty(Frames, 'visibility', 'visible');
-            map.setPaintProperty(Frames, 'line-opacity', newOpacity);
+            map.setPaintProperty(Frames, 'fill-opacity', newOpacity);
             } else {
             map.setLayoutProperty(Frames, 'visibility', 'none');
-            map.setPaintProperty(Frames, 'line-opacity', newOpacity);
+            map.setPaintProperty(Frames, 'fill-opacity', newOpacity);
             }
             // Extract the properties from the clicked feature
             var clickedFeatureProperties = e.features[0].properties;
 
             // Set a filter on the target layer to show only matching features
-            map.setFilter(Frames, ['==', 'UniqueID', clickedFeatureProperties.UniqueID]);
+           // map.setFilter(Frames, ['==', 'UniqueID', clickedFeatureProperties.UniqueID]);
 
             var popup = new mapboxgl.Popup()
             .setLngLat(coordinates)
