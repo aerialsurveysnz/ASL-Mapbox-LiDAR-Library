@@ -73,50 +73,167 @@ body { margin: 0; padding: 0; }
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/satellite-streets-v12',
         center: [-185.555419,-40.693557],
-        zoom: 5.0
+        zoom: 5.5
     });
     var slider = document.getElementById('year-slider');
     var selectedYearElement = document.getElementById('selected-year');
-
-    var AreasLayer;
+    var geojsonLayer;
+    var FramesLayer;
 
     slider.addEventListener('input', function (e) {
         var year = parseInt(e.target.value);
         selectedYearElement.textContent = year;
 
         // Remove previous GeoJSON layer if it exists
-
-        if (AreasLayer) {
-            map.removeLayer(AreasLayer);
-            map.removeSource(AreasLayer);
+        if (geojsonLayer) {
+            map.removeLayer(geojsonLayer);
+            map.removeSource(geojsonLayer);
+        }
+        if (FramesLayer) {
+            map.removeLayer(FramesLayer);
+            map.removeSource(FramesLayer);
         }
 
         // Construct the GeoJSON layer ID with the selected year prefix
-          var Areas = 'Areas' + year;
+        var FrameCentres = 'FrameCentres' + year;
+        var Frames = 'Frames' + year;
 
         // Your GeoJSON source URL for the corresponding year
-                var geojsonAreas = 'data/'+ year +'_ASL_LiDAR.geojson';
+        var geojsonUrl = 'data/'+ year +'_ASL_LiDAR LiDAR Centres.geojson';
+        var geojsonFrames = 'data/'+ year +'_ASL_LiDAR - Captured_Area.geojson';
 
         // Add Frames
-        map.addSource(Areas, {
+        map.addSource(Frames, {
             type: 'geojson',
-            data: geojsonAreas
+            data: geojsonFrames
         });
 
         
         map.addLayer({
-            id: Areas,
+            id: Frames,
             type: 'fill',
-            source: Areas,
+            source: Frames,
+            'layout': {
+            // Make the layer visible by default.
+            'visibility': 'visible'
+            },
             paint: {
-          'fill-color': 'Blue',
-          'fill-opacity': 0.7
-        }
+                    'fill-color': 'blue',
+                    'fill-opacity': 0.5
+                    }
+        });
+
+        // Add Frame Centres
+        map.addSource(FrameCentres, {
+            type: 'geojson',
+            data: geojsonUrl
+        });
+
+        map.addLayer({
+            id: FrameCentres,
+            type: 'circle',
+            source: FrameCentres,
+            paint: {
+				'circle-radius': [
+                                'interpolate',
+                                ['exponential', 1.10],
+                                ['zoom'],
+                                0,
+                                0.5,
+                                19,
+                                15
+                                ],
+                    'circle-color': 'White'
+            }
         });
 
         
         // Update the global geojsonLayer variable for future removal
-        AreasLayer = Areas;
+        geojsonLayer = FrameCentres;
+        FramesLayer = Frames;
+
+        
+                // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', [FrameCentres], (e) => {
+        // Copy coordinates array.
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const description = "<b>Survey No: </b>"+e.features[0].properties.SN_No+"</br>";
+        const UniqueID =e.features[0].properties.UniqueID;
+        
+        var popupContent = document.createElement('div');
+        popupContent.innerHTML = description;
+        
+        var copyButton = document.createElement('button');
+        copyButton.innerText = 'Copy Reference';
+        copyButton.style.display = 'block';
+        copyButton.style.margin = '0 auto'; // Center the button horizontally
+        copyButton.addEventListener('click', function() {
+            copyToClipboard(UniqueID);
+            //alert('Content copied to clipboard!');
+        });
+
+        popupContent.appendChild(copyButton);
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+
+        
+        
+            // Get the layer's current opacity
+            var currentOpacity = map.getPaintProperty(Frames, 'line-opacity');
+
+        // Toggle the opacity value
+        var newOpacity = 1;
+
+        // Update the layer's opacity
+        //map.setPaintProperty(Frames, 'line-opacity', newOpacity);
+
+        // Change the visibility of the target layer
+            var targetLayerVisibility = map.getLayoutProperty(Frames, 'visibility');
+            if (targetLayerVisibility === 'none') {
+            map.setLayoutProperty(Frames, 'visibility', 'visible');
+            map.setPaintProperty(Frames, 'line-opacity', newOpacity);
+            } else {
+            map.setLayoutProperty(Frames, 'visibility', 'none');
+            map.setPaintProperty(Frames, 'line-opacity', newOpacity);
+            }
+            // Extract the properties from the clicked feature
+            var clickedFeatureProperties = e.features[0].properties;
+
+            // Set a filter on the target layer to show only matching features
+            map.setFilter(Frames, ['==', 'UniqueID', clickedFeatureProperties.UniqueID]);
+
+            var popup = new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setDOMContent(popupContent)
+            .addTo(map);
+
+            });
+
+            function copyToClipboard(text) {
+            var dummyInput = document.createElement('textarea');
+            dummyInput.value = text;
+            document.body.appendChild(dummyInput);
+            dummyInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummyInput);
+            }
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', FrameCentres, () => {
+        map.getCanvas().style.cursor = 'pointer';
+        });
+        
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', FrameCentres, () => {
+        map.getCanvas().style.cursor = '';
+        });
+    
 
     });
 
