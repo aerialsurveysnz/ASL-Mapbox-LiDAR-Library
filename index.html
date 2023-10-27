@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Display a popup on click</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+.slider-container {
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            z-index: 1;
+        }
+
+        .slider {
+            width: 100%;
+            color: white;
+        }
+
+        .slider-label {
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .selected-year {
+            font-weight: bold;
+            color: white;
+        }
+        #slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 20px;
+  background-color: blue;
+  cursor: pointer;
+}
+
+#slider::-moz-range-thumb {
+  width: 10px;
+  height: 20px;
+  background-color: blue;
+  cursor: pointer;
+}   
+</style>
+</head>
+<body>
+<style>
+    .mapboxgl-popup {
+        max-width: 800px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    }
+
+</style>
+<div id="map"></div>
+
+<div class="slider-container">
+    <div class="slider-label">Year:</div>
+    <input type="range" min="2016" max="2023" value="2016" class="slider" id="year-slider">
+    <div class="slider-label">Selected Year: <span class="selected-year" id="selected-year">2016</span></div>
+</div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiamFtZXMtbWNrZW56aWUtYXNsIiwiYSI6ImNsaHBtYXo1aDA4MWczZ281bXJhbnc0dGMifQ.8pxJxAy6HV0CQfuibaIFmw';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: [-185.555419,-40.693557],
+        zoom: 5.5
+    });
+    var slider = document.getElementById('year-slider');
+    var selectedYearElement = document.getElementById('selected-year');
+    var geojsonLayer;
+    var AreasLayer;
+
+    slider.addEventListener('input', function (e) {
+        var year = parseInt(e.target.value);
+        selectedYearElement.textContent = year;
+
+        // Remove previous GeoJSON layer if it exists
+        // if (geojsonLayer) {
+        //     map.removeLayer(geojsonLayer);
+        //     map.removeSource(geojsonLayer);
+        // }
+        if (AreasLayer) {
+            map.removeLayer(AreasLayer);
+            map.removeSource(AreasLayer);
+        }
+
+        // Construct the GeoJSON layer ID with the selected year prefix
+        //var FrameCentres = 'FrameCentres' + year;
+        var Areas = 'Areas' + year;
+
+        // Your GeoJSON source URL for the corresponding year
+        //var geojsonUrl = 'data/'+ year +'_ASL_LiDAR.geojson';
+        var geojsonAreas = 'data/'+ year +'_ASL_LiDAR.geojson';
+
+        // Add Frames
+        map.addSource(Areas, {
+            type: 'geojson',
+            data: geojsonAreas
+        });
+
+        
+        map.addLayer({
+            id: Areas,
+            type: 'fill',
+            source: Areas,
+            // 'layout': {
+            // // Make the layer visible by default.
+            // 'visibility': 'visible',
+            // 'line-join': 'round',
+            // 'line-cap': 'round'
+            // },
+            paint: {
+          'fill-color': 'Blue',
+          'fill-opacity': 0.5
+        }
+        });
+
+        // // Add Frame Centres
+        // map.addSource(FrameCentres, {
+        //     type: 'geojson',
+        //     data: geojsonUrl
+        // });
+
+        // map.addLayer({
+        //     id: FrameCentres,
+        //     type: 'circle',
+        //     source: FrameCentres,
+        //     paint: {
+		// 		'circle-radius': [
+        //                         'interpolate',
+        //                         ['exponential', 1.10],
+        //                         ['zoom'],
+        //                         0,
+        //                         0.5,
+        //                         19,
+        //                         15
+        //                         ],
+        //             'circle-color': 'red'
+        //     }
+        // });
+
+        
+        // Update the global geojsonLayer variable for future removal
+        //geojsonLayer = FrameCentres;
+        AreasLayer = Areas;
+
+        
+                // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+//         map.on('click', [FrameCentres], (e) => {
+//         // Copy coordinates array.
+//         const coordinates = e.features[0].geometry.coordinates.slice();
+//         const description = "<b>District: </b>"+e.features[0].properties.District+"</br>"+
+//                             "<b>Suburb: </b>"+e.features[0].properties.Suburb+"</br>"+
+//                             "<b>Date: </b>"+e.features[0].properties.DATE+"</br>"+
+//                             "<b>Survey No: </b>"+e.features[0].properties.SURVEY_NO+"</br>"+
+//                             "<b>Camera: </b>"+e.features[0].properties.CAMERA+"</br>"+
+//                             "<b>GSD (m): </b>"+e.features[0].properties.GSD+"</br>";
+//         const UniqueID =e.features[0].properties.UniqueID;
+        
+//         var popupContent = document.createElement('div');
+//         popupContent.innerHTML = description;
+        
+//         var copyButton = document.createElement('button');
+//         copyButton.innerText = 'Copy Reference';
+//         copyButton.style.display = 'block';
+//         copyButton.style.margin = '0 auto'; // Center the button horizontally
+//         copyButton.addEventListener('click', function() {
+//             copyToClipboard(UniqueID);
+//             //alert('Content copied to clipboard!');
+//         });
+
+//         popupContent.appendChild(copyButton);
+
+//         // Ensure that if the map is zoomed out such that multiple
+//         // copies of the feature are visible, the popup appears
+//         // over the copy being pointed to.
+//         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+//     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+//   }
+
+        
+        
+//             // Get the layer's current opacity
+//             var currentOpacity = map.getPaintProperty(Areas, 'line-opacity');
+
+//         // Toggle the opacity value
+//         var newOpacity = 1;
+
+//         // Update the layer's opacity
+//         //map.setPaintProperty(Frames, 'line-opacity', newOpacity);
+
+//         // Change the visibility of the target layer
+//             var targetLayerVisibility = map.getLayoutProperty(Areas, 'visibility');
+//             if (targetLayerVisibility === 'none') {
+//             map.setLayoutProperty(Areas, 'visibility', 'visible');
+//             map.setPaintProperty(Areas, 'line-opacity', newOpacity);
+//             } else {
+//             map.setLayoutProperty(Areas, 'visibility', 'none');
+//             map.setPaintProperty(Areas, 'line-opacity', newOpacity);
+//             }
+//             // Extract the properties from the clicked feature
+//             var clickedFeatureProperties = e.features[0].properties;
+
+//             // Set a filter on the target layer to show only matching features
+//             map.setFilter(Areas, ['==', 'UniqueID', clickedFeatureProperties.UniqueID]);
+
+//             var popup = new mapboxgl.Popup()
+//             .setLngLat(coordinates)
+//             .setDOMContent(popupContent)
+//             .addTo(map);
+
+//             });
+
+//             function copyToClipboard(text) {
+//             var dummyInput = document.createElement('textarea');
+//             dummyInput.value = text;
+//             document.body.appendChild(dummyInput);
+//             dummyInput.select();
+//             document.execCommand('copy');
+//             document.body.removeChild(dummyInput);
+//             }
+
+//         // Change the cursor to a pointer when the mouse is over the places layer.
+//         map.on('mouseenter', FrameCentres, () => {
+//         map.getCanvas().style.cursor = 'pointer';
+//         });
+        
+//         // Change it back to a pointer when it leaves.
+//         map.on('mouseleave', FrameCentres, () => {
+//         map.getCanvas().style.cursor = '';
+//         });
+    
+
+    });
+
+</script>
+
+</body>
+</html>
