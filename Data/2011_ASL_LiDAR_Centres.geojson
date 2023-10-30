@@ -1,0 +1,14 @@
+{
+"type": "FeatureCollection",
+"name": "2011_ASL_LiDAR_Centres",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2153", "Company_Name": "Solid Energy NZ", "SN_No": "SN13310", "Description": "Ghost Track - Flying 6835 ft & Orthos", "OrthoGSD_m": 0.15, "PointDensity": null }, "geometry": { "type": "Point", "coordinates": [ 172.177199029121397, -41.652727983538675 ] } },
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2219", "Company_Name": null, "SN_No": null, "Description": null, "OrthoGSD_m": null, "PointDensity": null }, "geometry": { "type": "Point", "coordinates": [ 171.838890126548563, -41.710952208713429 ] } },
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2262", "Company_Name": "Bathurst Resources (Buller Coal)", "SN_No": null, "Description": "Denniston - 1943 Orthos", "OrthoGSD_m": 0.15625, "PointDensity": null }, "geometry": { "type": "Point", "coordinates": [ 171.816424679355038, -41.750969776730699 ] } },
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2269", "Company_Name": "Nelson Forests", "SN_No": "SN13372", "Description": "Fairacres Forest - Flying & Orthos", "OrthoGSD_m": 0.15, "PointDensity": null }, "geometry": { "type": "Point", "coordinates": [ 173.513069559472569, -41.620936749837369 ] } },
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2285", "Company_Name": "Marlborough DC", "SN_No": "SN13405", "Description": "Wairau Valley Blenhei m - LiDAR Survey 650 m AGL", "OrthoGSD_m": null, "PointDensity": "0.15" }, "geometry": { "type": "Point", "coordinates": [ 173.522737435431679, -41.567772364010715 ] } },
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2318", "Company_Name": "Solid Energy NZ", "SN_No": "SN13426", "Description": "Stockton - Dec 2011 Flying 4794 ft & Orthos", "OrthoGSD_m": 0.125, "PointDensity": null }, "geometry": { "type": "Point", "coordinates": [ 171.882461144490236, -41.671021999413313 ] } },
+{ "type": "Feature", "properties": { "PROJNo": "PGRM2324", "Company_Name": null, "SN_No": null, "Description": null, "OrthoGSD_m": null, "PointDensity": null }, "geometry": { "type": "Point", "coordinates": [ 175.016347636789703, -37.388660122018472 ] } }
+]
+}

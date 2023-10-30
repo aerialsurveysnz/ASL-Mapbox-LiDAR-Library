@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "2010_ASL_LiDAR_Centres",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "PROJNO": "FPFA1086", "Company_Name": "Northland RC", "SN_No": "SN13691", "Description": "Dargaville & Paparoa - 2015 LiDAR Survey 1400 mAGL", "OrthoGSD_m": null, "PointDensity": "1", "Area": null }, "geometry": { "type": "Point", "coordinates": [ 173.955668465677434, -35.977971507574189 ] } },
+{ "type": "Feature", "properties": { "PROJNO": "FPFA1087", "Company_Name": "Rayonier NZ", "SN_No": "SN13699", "Description": "Hawke's Bay Forest - 2015 LiDAR Survey 810 m AMGL", "OrthoGSD_m": null, "PointDensity": "4", "Area": null }, "geometry": { "type": "Point", "coordinates": [ 176.829257981775214, -39.824478903968505 ] } },
+{ "type": "Feature", "properties": { "PROJNO": "FPFA1093", "Company_Name": "John Alexander Surveying", "SN_No": "SN13705", "Description": "Cardrona Ski Field (High Spec) - 2015 LiDAR Survey 680 m AMGL", "OrthoGSD_m": null, "PointDensity": "4", "Area": null }, "geometry": { "type": "Point", "coordinates": [ 168.972976491036462, -44.871386331835758 ] } },
+{ "type": "Feature", "properties": { "PROJNO": "FPFA1098", "Company_Name": "Central Plains Water", "SN_No": null, "Description": "Sheffield Water - 2014 LiDAR Survey 1200 m AGL", "OrthoGSD_m": null, "PointDensity": "0.5", "Area": null }, "geometry": { "type": "Point", "coordinates": [ 171.989074962556856, -43.405583596856509 ] } },
+{ "type": "Feature", "properties": { "PROJNO": "FPFA1109", "Company_Name": "Riley Consultants", "SN_No": null, "Description": "Cardrona Eastern Extents - 2015 LiDAR Survey", "OrthoGSD_m": null, "PointDensity": "1", "Area": null }, "geometry": { "type": "Point", "coordinates": [ 169.007626881314451, -44.872293078229973 ] } },
+{ "type": "Feature", "properties": { "PROJNO": "PGRM1083", "Company_Name": "Ravensdown", "SN_No": null, "Description": "Cochrane, Clinton - LO Ortho", "OrthoGSD_m": 1.0, "PointDensity": null, "Area": null }, "geometry": { "type": "Point", "coordinates": [ 173.97178304205255, -39.609358367683157 ] } }
+]
+}

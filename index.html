@@ -61,8 +61,8 @@ body { margin: 0; padding: 0; }
 <div id="map"></div>
 <div class="slider-container">
     <div class="slider-label">Year:</div>
-    <input type="range" min="2016" max="2023" value="2016" class="slider" id="year-slider">
-    <div class="slider-label">Selected Year: <span class="selected-year" id="selected-year">2016</span></div>
+    <input type="range" min="2007" max="2023" value="2007" class="slider" id="year-slider">
+    <div class="slider-label">Selected Year: <span class="selected-year" id="selected-year">2007</span></div>
 </div>
 
 <script>
@@ -118,7 +118,7 @@ body { margin: 0; padding: 0; }
             },
             paint: {
                     'fill-color': 'blue',
-                    //'line-width': 2,
+                    'fill-outline-color': 'Red',
                     'fill-opacity': 0.5
                     }
         });
@@ -158,11 +158,9 @@ body { margin: 0; padding: 0; }
         map.on('click', [FrameCentres], (e) => {
         // Copy coordinates array.
         const coordinates = e.features[0].geometry.coordinates.slice();
-        const description = "<b>District: </b>"+e.features[0].properties.District+"</br>"+
-                            "<b>Suburb: </b>"+e.features[0].properties.Suburb+"</br>"+
-                            "<b>Date: </b>"+e.features[0].properties.Date+"</br>"+
+        const description = "<b>Project No: </b>"+e.features[0].properties.PROJNO+"</br>"+
                             "<b>Survey No: </b>"+e.features[0].properties.SN_No+"</br>"+
-                            "<b>Point Density (m2): </b>"+e.features[0].properties.Date+"</br>";
+                            "<b>Point Density (m2): </b>"+e.features[0].properties.PointDensity+"</br>";
         const UniqueID =e.features[0].properties.UniqueID;
         
         var popupContent = document.createElement('div');
