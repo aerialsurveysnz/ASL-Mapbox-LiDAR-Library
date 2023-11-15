@@ -166,7 +166,7 @@ body { margin: 0; padding: 0; }
         var popupContent = document.createElement('div');
         popupContent.innerHTML = description;
         
-        const photoref = e.features[0].properties.SURVEY_NO+"_Frame:"+e.features[0].properties.FRAME+"_"+e.features[0].properties.Date
+        const photoref = "Project:"+e.features[0].properties.PROJNO+"_Survey:"+e.features[0].properties.SURVEY_NO
         var copyButton = document.createElement('button');
         copyButton.innerText = 'Copy Reference';
         copyButton.style.display = 'block';
